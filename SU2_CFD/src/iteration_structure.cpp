@@ -1745,9 +1745,9 @@ void CDiscAdjFluidIteration::Preprocess(COutput *output,
       Direct_Iter += 1;
     }
 
-    if (ExtIter == 0){
+    /*--- Loading of primal solutions identical for dual_time_1st and dual_time_2d ---*/
 
-      if (dual_time_2nd) {
+    if (ExtIter == 0 && dual_time){
 
         /*--- Load solution at timestep n-2 ---*/
 
@@ -1765,8 +1765,6 @@ void CDiscAdjFluidIteration::Preprocess(COutput *output,
             }
           }
         }
-      }
-      if (dual_time) {
 
         /*--- Load solution at timestep n-1 ---*/
 
@@ -1782,14 +1780,11 @@ void CDiscAdjFluidIteration::Preprocess(COutput *output,
             }
           }
         }
-      }
 
       /*--- Load solution timestep n ---*/
 
       LoadUnsteady_Solution(geometry_container, solver_container,config_container, val_iZone, Direct_Iter);
-
     }
-
 
     if ((ExtIter > 0) && dual_time){
 
@@ -1818,34 +1813,25 @@ void CDiscAdjFluidIteration::Preprocess(COutput *output,
           }
         }
       }
-      if (dual_time_1st){
-      /*--- Set Solution at timestep n-1 to the previously loaded solution ---*/
-        for (iMesh=0; iMesh<=config_container[val_iZone]->GetnMGLevels();iMesh++) {
-          for(iPoint=0; iPoint<geometry_container[val_iZone][iMesh]->GetnPoint();iPoint++) {
-            solver_container[val_iZone][iMesh][FLOW_SOL]->node[iPoint]->Set_Solution_time_n(solver_container[val_iZone][iMesh][FLOW_SOL]->node[iPoint]->GetSolution_time_n1());
-            if (turbulent) {
-              solver_container[val_iZone][iMesh][TURB_SOL]->node[iPoint]->Set_Solution_time_n(solver_container[val_iZone][iMesh][TURB_SOL]->node[iPoint]->GetSolution_time_n1());
-            }
+
+      /*--- Set Solution at timestep n-1 to solution at n-2 ---*/
+
+      for (iMesh=0; iMesh<=config_container[val_iZone]->GetnMGLevels();iMesh++) {
+        for(iPoint=0; iPoint<geometry_container[val_iZone][iMesh]->GetnPoint();iPoint++) {
+        solver_container[val_iZone][iMesh][FLOW_SOL]->node[iPoint]->Set_Solution_time_n(solver_container[val_iZone][iMesh][FLOW_SOL]->node[iPoint]->GetSolution_time_n1());
+          if (turbulent) {
+            solver_container[val_iZone][iMesh][TURB_SOL]->node[iPoint]->Set_Solution_time_n(solver_container[val_iZone][iMesh][TURB_SOL]->node[iPoint]->GetSolution_time_n1());
           }
         }
       }
-      if (dual_time_2nd){
-        /*--- Set Solution at timestep n-1 to solution at n-2 ---*/
-        for (iMesh=0; iMesh<=config_container[val_iZone]->GetnMGLevels();iMesh++) {
-          for(iPoint=0; iPoint<geometry_container[val_iZone][iMesh]->GetnPoint();iPoint++) {
-            solver_container[val_iZone][iMesh][FLOW_SOL]->node[iPoint]->Set_Solution_time_n(solver_container[val_iZone][iMesh][FLOW_SOL]->node[iPoint]->GetSolution_time_n1());
-            if (turbulent) {
-              solver_container[val_iZone][iMesh][TURB_SOL]->node[iPoint]->Set_Solution_time_n(solver_container[val_iZone][iMesh][TURB_SOL]->node[iPoint]->GetSolution_time_n1());
-            }
-          }
-        }
-        /*--- Set Solution at timestep n-2 to the previously loaded solution ---*/
-        for (iMesh=0; iMesh<=config_container[val_iZone]->GetnMGLevels();iMesh++) {
-          for(iPoint=0; iPoint<geometry_container[val_iZone][iMesh]->GetnPoint();iPoint++) {
-            solver_container[val_iZone][iMesh][FLOW_SOL]->node[iPoint]->Set_Solution_time_n1(solver_container[val_iZone][iMesh][FLOW_SOL]->node[iPoint]->GetSolution_Old());
-            if (turbulent) {
+
+      /*--- Set Solution at timestep n-2 to the previously loaded solution ---*/
+
+      for (iMesh=0; iMesh<=config_container[val_iZone]->GetnMGLevels();iMesh++) {
+        for(iPoint=0; iPoint<geometry_container[val_iZone][iMesh]->GetnPoint();iPoint++) {
+        solver_container[val_iZone][iMesh][FLOW_SOL]->node[iPoint]->Set_Solution_time_n1(solver_container[val_iZone][iMesh][FLOW_SOL]->node[iPoint]->GetSolution_Old());
+          if (turbulent) {
               solver_container[val_iZone][iMesh][TURB_SOL]->node[iPoint]->Set_Solution_time_n1(solver_container[val_iZone][iMesh][TURB_SOL]->node[iPoint]->GetSolution_Old());
-            }
           }
         }
       }
