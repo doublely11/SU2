@@ -1777,9 +1777,9 @@ void CDiscAdjFluidIteration::Preprocess(COutput *output,
       Direct_Iter += 1;
     }
 
-    /*--- Loading of primal solutions identical for dual_time_1st and dual_time_2d ---*/
+    if (ExtIter == 0){
 
-    if (ExtIter == 0 && dual_time){
+      if (dual_time_2nd) {
 
         /*--- Load solution at timestep n-2 ---*/
 
@@ -1797,6 +1797,8 @@ void CDiscAdjFluidIteration::Preprocess(COutput *output,
             }
           }
         }
+      }
+      if (dual_time) {
 
         /*--- Load solution at timestep n-1 ---*/
 
@@ -1812,6 +1814,7 @@ void CDiscAdjFluidIteration::Preprocess(COutput *output,
             }
           }
         }
+      }
 
       /*--- Load solution timestep n ---*/
 
@@ -1819,11 +1822,16 @@ void CDiscAdjFluidIteration::Preprocess(COutput *output,
 
     }
 
+
     if ((ExtIter > 0) && dual_time){
 
       /*--- Load solution timestep n - 2 ---*/
-
-      LoadUnsteady_Solution(geometry_container, solver_container,config_container, val_iInst, val_iZone, Direct_Iter - 2);
+      if (dual_time_1st){
+        LoadUnsteady_Solution(geometry_container, solver_container,config_container, val_iInst, val_iZone, Direct_Iter - 1);
+      } else {
+        LoadUnsteady_Solution(geometry_container, solver_container,config_container, val_iInst, val_iZone, Direct_Iter - 2);
+      }
+  
 
       /*--- Temporarily store the loaded solution in the Solution_Old array ---*/
 
