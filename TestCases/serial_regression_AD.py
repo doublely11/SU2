@@ -161,6 +161,22 @@ def main():
     discadj_cylinder.unsteady  = True
     test_list.append(discadj_cylinder)
     
+    #######################################################
+    ### Unsteady Disc. adj. compressible RANS           ###
+    #######################################################
+
+    # Turbulent Cylinder
+    discadj_cylinder           = TestCase('unsteady_cylinder_DT_1ST')
+    discadj_cylinder.cfg_dir   = "disc_adj_rans/cylinder_DT_1ST"
+    discadj_cylinder.cfg_file  = "cylinder.cfg"
+    discadj_cylinder.test_iter = 9
+    discadj_cylinder.test_vals = [3.698165, -1.607052, -2.2500e-03, 2.7211e-05] #last 4 columns
+    discadj_cylinder.su2_exec  = "SU2_CFD_AD"
+    discadj_cylinder.timeout   = 1600
+    discadj_cylinder.tol       = 0.00001
+    discadj_cylinder.unsteady  = True
+    test_list.append(discadj_cylinder)
+
     ###################################
     ### Structural Adjoint          ###
     ###################################

@@ -135,9 +135,7 @@ CVariable::CVariable(unsigned short val_nDim, unsigned short val_nvar, CConfig *
   
   if (config->GetUnsteady_Simulation() != NO) {
     Solution_time_n = new su2double [nVar];
-    if (config->GetUnsteady_Simulation() == DT_STEPPING_2ND) {
-      Solution_time_n1 = new su2double [nVar];
-    }
+    Solution_time_n1 = new su2double [nVar];
   }
   
 	if (config->GetFSI_Simulation() && config->GetDiscrete_Adjoint()){
